@@ -76,6 +76,7 @@ class MainActivity : AppCompatActivity() {
         return File(filesDir,"data.txt")
     }
 
+    // load items
     private fun loadItems(){
         try {
             listOfTasks = FileUtils.readLines(getDataFile(), Charset.defaultCharset())
@@ -84,6 +85,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    // save items
     fun saveItems(){
         try {
             FileUtils.writeLines(getDataFile(),listOfTasks)
