@@ -1,5 +1,6 @@
 package com.mypath.simpletodo
 
+import android.annotation.SuppressLint
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
@@ -9,11 +10,22 @@ import androidx.recyclerview.widget.RecyclerView
 
 class MainActivity : AppCompatActivity() {
       private val listOfTasks = mutableListOf<String>()
-
+      lateinit var  adapter : TaskItemAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        val onLongClickLister = object :TaskItemAdapter.OnLongClickListener{
+            @SuppressLint("NotifyDataSetChanged")
+            override fun onItemLongClicked(position: Int) {
+                // Remove the Item form the list
+                listOfTasks.removeAt(position)
+
+                // Notify that the adapter has changed.
+                adapter.notifyDataSetChanged()
+            }
+        }
 
         listOfTasks.add("First Item")
         listOfTasks.add("Second Item")
@@ -22,7 +34,7 @@ class MainActivity : AppCompatActivity() {
         val rvItems:RecyclerView = findViewById(R.id.rvItems)
 
         // Create adapter passing in the sample user data
-        val adapter = TaskItemAdapter(listOfTasks)
+        adapter = TaskItemAdapter(listOfTasks,onLongClickLister)
 
         // Attach the adapter to the recyclerview to populate items
         rvItems.adapter = adapter
@@ -36,10 +48,13 @@ class MainActivity : AppCompatActivity() {
         btAdd.setOnClickListener {
             val inputTaskField = addTaskField.text.toString()
 
+            // Add the string to our list of task
             listOfTasks.add(inputTaskField)
 
+            // Notify that item reflected at the position has been newly inserted.
             adapter.notifyItemInserted(listOfTasks.size-1)
 
+            // Reset text field
             addTaskField.text=""
         }
 

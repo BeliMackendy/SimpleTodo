@@ -6,7 +6,11 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
-class TaskItemAdapter(val lisOfItems:List<String>):RecyclerView.Adapter<TaskItemAdapter.ViewHolder>() {
+class TaskItemAdapter(private val lisOfItems:List<String>, val longClickListener:OnLongClickListener):RecyclerView.Adapter<TaskItemAdapter.ViewHolder>() {
+
+        interface OnLongClickListener{
+            fun onItemLongClicked(position: Int)
+        }
 
        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val context = parent.context
@@ -31,9 +35,13 @@ class TaskItemAdapter(val lisOfItems:List<String>):RecyclerView.Adapter<TaskItem
     }
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val textView:TextView
+        val textView:TextView = itemView.findViewById(android.R.id.text1)
+
         init{
-            textView= itemView.findViewById(android.R.id.text1)
+            itemView.setOnLongClickListener {
+                longClickListener.onItemLongClicked(adapterPosition)
+                true
+            }
         }
     }
 }
