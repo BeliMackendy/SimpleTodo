@@ -5,11 +5,16 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import org.apache.commons.io.FileUtils
+import java.io.File
+import java.io.IOException
+import java.nio.charset.Charset
 
 class MainActivity : AppCompatActivity() {
-      private val listOfTasks = mutableListOf<String>()
+      private var listOfTasks = mutableListOf<String>()
       lateinit var  adapter : TaskItemAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -24,11 +29,14 @@ class MainActivity : AppCompatActivity() {
 
                 // Notify that the adapter has changed.
                 adapter.notifyDataSetChanged()
+
+                saveItems()
+
+                Toast.makeText(this@MainActivity, "Item Removed", Toast.LENGTH_SHORT).show()
             }
         }
 
-        listOfTasks.add("First Item")
-        listOfTasks.add("Second Item")
+        loadItems()
 
         // Lookup the recyclerview in activity layout
         val rvItems:RecyclerView = findViewById(R.id.rvItems)
@@ -56,7 +64,31 @@ class MainActivity : AppCompatActivity() {
 
             // Reset text field
             addTaskField.text=""
-        }
 
+            saveItems()
+
+            Toast.makeText(this@MainActivity, "Item Inserted", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    // get the file we need
+    private fun  getDataFile():File{
+        return File(filesDir,"data.txt")
+    }
+
+    fun loadItems(){
+        try {
+            listOfTasks = FileUtils.readLines(getDataFile(), Charset.defaultCharset())
+        }catch (ioException:IOException){
+            ioException.printStackTrace()
+        }
+    }
+
+    fun saveItems(){
+        try {
+            FileUtils.writeLines(getDataFile(),listOfTasks)
+        }catch (ioException:IOException){
+            ioException.printStackTrace()
+        }
     }
 }
