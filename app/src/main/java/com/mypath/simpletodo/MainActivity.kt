@@ -76,7 +76,7 @@ class MainActivity : AppCompatActivity() {
         return File(filesDir,"data.txt")
     }
 
-    fun loadItems(){
+    private fun loadItems(){
         try {
             listOfTasks = FileUtils.readLines(getDataFile(), Charset.defaultCharset())
         }catch (ioException:IOException){
