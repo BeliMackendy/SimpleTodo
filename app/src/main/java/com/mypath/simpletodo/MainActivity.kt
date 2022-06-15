@@ -2,6 +2,8 @@ package com.mypath.simpletodo
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Button
+import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
@@ -27,6 +29,19 @@ class MainActivity : AppCompatActivity() {
 
         // Set layout manager to position the items
         rvItems.layoutManager = LinearLayoutManager(this)
+
+        val btAdd:Button = findViewById(R.id.btAdd)
+        val addTaskField:TextView = findViewById(R.id.addTaskField)
+
+        btAdd.setOnClickListener {
+            val inputTaskField = addTaskField.text.toString()
+
+            listOfTasks.add(inputTaskField)
+
+            adapter.notifyItemInserted(listOfTasks.size-1)
+
+            addTaskField.text=""
+        }
 
     }
 }
