@@ -1,11 +1,15 @@
 package com.mypath.simpletodo
 
 import android.annotation.SuppressLint
-import androidx.appcompat.app.AppCompatActivity
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import org.apache.commons.io.FileUtils
@@ -13,9 +17,31 @@ import java.io.File
 import java.io.IOException
 import java.nio.charset.Charset
 
+
 class MainActivity : AppCompatActivity() {
       private var listOfTasks = mutableListOf<String>()
       lateinit var  adapter : TaskItemAdapter
+
+    @SuppressLint("NotifyDataSetChanged")
+    var editActivityResultLauncher: ActivityResultLauncher<Intent> = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        // If the user comes back to this activity from EditActivity
+        // with no error or cancellation
+        if (result.resultCode == Activity.RESULT_OK) {
+            val data = result.data
+            // Get the data passed from EditActivity
+            if (data != null) {
+                val itemEditedString = data.extras!!.getString("ITEM_TEXT")
+                val itemPosition = data.extras!!.getInt("ITEM_POSITION")
+
+                listOfTasks[itemPosition] = itemEditedString.toString()
+                adapter.notifyDataSetChanged()
+                saveItems()
+                Toast.makeText(this@MainActivity, "Item Changed", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,13 +62,27 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        val onClickListener = object :TaskItemAdapter.OnClickListener{
+            override fun onItemClicked(position: Int) {
+                // first parameter is the context, second is the class of the activity to launch
+                val i = Intent(this@MainActivity, EditActivity::class.java)
+
+                // put "extras" into the bundle for access in the second activity
+                i.putExtra("ITEM_TEXT", listOfTasks[position])
+                i.putExtra("ITEM_POSITION", position)
+                // brings up the second activity
+                editActivityResultLauncher.launch(i)
+            }
+
+        }
+
         loadItems()
 
         // Lookup the recyclerview in activity layout
         val rvItems:RecyclerView = findViewById(R.id.rvItems)
 
         // Create adapter passing in the sample user data
-        adapter = TaskItemAdapter(listOfTasks,onLongClickLister)
+        adapter = TaskItemAdapter(listOfTasks,onLongClickLister,onClickListener)
 
         // Attach the adapter to the recyclerview to populate items
         rvItems.adapter = adapter
