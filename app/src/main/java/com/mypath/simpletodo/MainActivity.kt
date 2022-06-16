@@ -47,7 +47,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val onLongClickLister = object :TaskItemAdapter.OnLongClickListener{
+        val myOnClickListener = object :TaskItemAdapter.MyOnClickListener{
             @SuppressLint("NotifyDataSetChanged")
             override fun onItemLongClicked(position: Int) {
                 // Remove the Item form the list
@@ -60,9 +60,7 @@ class MainActivity : AppCompatActivity() {
 
                 Toast.makeText(this@MainActivity, "Item Removed", Toast.LENGTH_SHORT).show()
             }
-        }
 
-        val onClickListener = object :TaskItemAdapter.OnClickListener{
             override fun onItemClicked(position: Int) {
                 // first parameter is the context, second is the class of the activity to launch
                 val i = Intent(this@MainActivity, EditActivity::class.java)
@@ -73,7 +71,6 @@ class MainActivity : AppCompatActivity() {
                 // brings up the second activity
                 editActivityResultLauncher.launch(i)
             }
-
         }
 
         loadItems()
@@ -82,7 +79,8 @@ class MainActivity : AppCompatActivity() {
         val rvItems:RecyclerView = findViewById(R.id.rvItems)
 
         // Create adapter passing in the sample user data
-        adapter = TaskItemAdapter(listOfTasks,onLongClickLister,onClickListener)
+//        adapter = TaskItemAdapter(listOfTasks,onLongClickLister,onClickListener)
+        adapter = TaskItemAdapter(listOfTasks,myOnClickListener)
 
         // Attach the adapter to the recyclerview to populate items
         rvItems.adapter = adapter

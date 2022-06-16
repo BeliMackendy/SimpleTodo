@@ -6,13 +6,10 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
-class TaskItemAdapter(private val lisOfItems:List<String>, val longClickListener:OnLongClickListener, val ClickListener:OnClickListener):RecyclerView.Adapter<TaskItemAdapter.ViewHolder>() {
+class TaskItemAdapter(private val lisOfItems:List<String>, val MyClickListener:MyOnClickListener):RecyclerView.Adapter<TaskItemAdapter.ViewHolder>() {
 
-        interface OnLongClickListener{
+        interface MyOnClickListener{
             fun onItemLongClicked(position: Int)
-        }
-
-        interface OnClickListener{
             fun onItemClicked(position: Int)
         }
 
@@ -43,12 +40,12 @@ class TaskItemAdapter(private val lisOfItems:List<String>, val longClickListener
 
         init{
             itemView.setOnLongClickListener {
-                longClickListener.onItemLongClicked(adapterPosition)
+                MyClickListener.onItemLongClicked(adapterPosition)
                 true
             }
 
             itemView.setOnClickListener {
-                ClickListener.onItemClicked(adapterPosition)
+                MyClickListener.onItemClicked(adapterPosition)
             }
         }
     }
